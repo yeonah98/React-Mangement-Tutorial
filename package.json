@@ -12,10 +12,5 @@
   },
   "devDependencies": {
     "concurrently": "^7.0.0"
-  },
-  "events": {
-		"restart": "kill-port 3000",
-		"crash": "kill-port 3000"
-	 },
-	"delay": "1500"
+  }
 }
