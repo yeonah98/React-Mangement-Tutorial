@@ -23,6 +23,22 @@ const styles =({
 })
 
 function App(props) {
+
+  const [customers, setCustomers] = useState([]);
+
+  const callApi = async () => {
+    const response = await fetch('/api/customers');
+    const body = await response.json();
+    return body;
+  };
+
+  useEffect(function(){
+    callApi()
+    .then(data => setCustomers(data))
+    .catch(err => console.log(err));
+  },[]);
+  console.log(customers);
+
   return (
     <Paper className={props.classes.root}>
       <Table className={props.classes.table}>
@@ -37,38 +53,12 @@ function App(props) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {customers.map(c => {return (<Customer key={c.id} id={c.id} image={c.image} name={c.name} birthday={c.birthday} gender={c.gender} job={c.job} />);})}
+          {customers ? customers.map(c => {return (<Customer key={c.id} id={c.id} image={c.image} name={c.name} birthday={c.birthday} gender={c.gender} job={c.job} />);
+          }) : ""}
         </TableBody>
       </Table>
     </Paper>
   );
 }
-
-const customers = [
-  {
-  'id': 1,
-  'image': 'https://placeimg.com/64/64/1',
-  'name': '유연아',
-  'birthday': '981127',
-  'gender': '여자',
-  'job': '대학생'
- },
- {
-  'id': 2,
-  'image': 'https://placeimg.com/64/64/2',
-  'name': '조지훈',
-  'birthday': '980404',
-  'gender': '남자',
-  'job': '대학생'
- },
- {
-  'id': 3,
-  'image': 'https://placeimg.com/64/64/3',
-  'name': '쿠키',
-  'birthday': '980910',
-  'gender': '여자',
-  'job': '대학생'
- }
-]
 
 export default withStyles(styles)(App);
