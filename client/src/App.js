@@ -48,7 +48,7 @@ function App(props) {
       clearInterval(timer);
     }
   },[]);
-  console.log(customers);
+  // console.log(customers);
 
   return (
     <Paper className={props.classes.root}>
