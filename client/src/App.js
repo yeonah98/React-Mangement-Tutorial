@@ -12,25 +12,86 @@ import TableCell from '@mui/material//TableCell';
 import { withStyles } from '@mui/styles';
 import { createSpacing } from '@mui/system';
 import CircularProgress from '@mui/material/CircularProgress';
+import { styled, alpha } from '@mui/material/styles';
+import AppBar from '@mui/material/AppBar';
+import Box from '@mui/material/Box';
+import Toolbar from '@mui/material/Toolbar';
+import IconButton from '@mui/material/IconButton';
+import Typography from '@mui/material/Typography';
+import InputBase from '@mui/material/InputBase';
+import MenuIcon from '@mui/icons-material/Menu';
+import SearchIcon from '@mui/icons-material/Search';
 
 const styles =({
   root: {
     width: '100%',
-    marginTop: createSpacing.unit*3,
-    oveflowX: "auto"
+   minWidth: 1080
   },
-  table: {
-    minWidth: 1080
+  paper: {
+    marginLeft: 18,
+    marginRight: 18
   },
   progress: {
     margin: createSpacing.unit*2
+  },
+  tableHead: {
+    fontSize: '1.0rem'
+  },
+  menu: {
+    marginTop: 15,
+    marginBottom: 15,
+    display: 'flex',
+    justifyContent: 'center'
   }
 })
+
+const Search = styled('div')(({ theme }) => ({
+  position: 'relative',
+  borderRadius: theme.shape.borderRadius,
+  backgroundColor: alpha(theme.palette.common.white, 0.15),
+  '&:hover': {
+    backgroundColor: alpha(theme.palette.common.white, 0.25),
+  },
+  marginLeft: 0,
+  width: '100%',
+  [theme.breakpoints.up('sm')]: {
+    marginLeft: theme.spacing(1),
+    width: 'auto',
+  },
+}));
+
+const SearchIconWrapper = styled('div')(({ theme }) => ({
+  padding: theme.spacing(0, 2),
+  height: '100%',
+  position: 'absolute',
+  pointerEvents: 'none',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+}));
+
+const StyledInputBase = styled(InputBase)(({ theme }) => ({
+  color: 'inherit',
+  '& .MuiInputBase-input': {
+    padding: theme.spacing(1, 1, 1, 0),
+    // vertical padding + font size from searchIcon
+    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
+    transition: theme.transitions.create('width'),
+    width: '100%',
+    [theme.breakpoints.up('sm')]: {
+      width: '12ch',
+      '&:focus': {
+        width: '20ch',
+      },
+    },
+  },
+}));
 
 function App(props) {
 
   const [customers, setCustomers] = useState('');
   const [completed, setCompleted] = useState(0);
+  const cellList = ["번호", "프로필 이미지", "이름", "생년월일", "성별", "직업", "설정"];
 
   const stateRefresh = () => {
     setCustomers('');
@@ -60,18 +121,47 @@ function App(props) {
   // console.log(customers);
 
   return (
-    <div>
-      <Paper className={props.classes.root}>
-        <Table className={props.classes.table}>
+    <div className={props.classes.root}>
+      <AppBar position="static">
+        <Toolbar>
+          <IconButton
+            size="large"
+            edge="start"
+            color="inherit"
+            aria-label="open drawer"
+            sx={{ mr: 2 }}
+          >
+            <MenuIcon />
+          </IconButton>
+          <Typography
+            variant="h6"
+            noWrap
+            component="div"
+            sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' } }}
+          >
+            고객 관리 시스템
+          </Typography>
+          <Search>
+            <SearchIconWrapper>
+              <SearchIcon />
+            </SearchIconWrapper>
+            <StyledInputBase
+              placeholder="검색하기"
+              inputProps={{ 'aria-label': 'search' }}
+            />
+          </Search>
+        </Toolbar>
+      </AppBar>
+      <div className={props.classes.menu}>
+       <CustomerAdd stateRefresh={stateRefresh}/>
+      </div>
+      <Paper className={props.classes.paper}>
+        <Table>
           <TableHead>
             <TableRow>
-              <TableCell>번호</TableCell>
-              <TableCell>이미지</TableCell>
-              <TableCell>이름</TableCell>
-              <TableCell>생년월일</TableCell>
-              <TableCell>성별</TableCell>
-              <TableCell>직업</TableCell>
-              <TableCell>설정</TableCell>
+             {cellList.map(c => {
+               return <TableCell className={props.classes.tableHead}>{c}</TableCell>
+             })}
             </TableRow>
           </TableHead>
           <TableBody>
@@ -88,7 +178,6 @@ function App(props) {
           </TableBody>
         </Table>
       </Paper>
-      <CustomerAdd stateRefresh={stateRefresh}/>
     </div>
   );
 }
