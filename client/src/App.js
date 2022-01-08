@@ -91,11 +91,13 @@ function App(props) {
 
   const [customers, setCustomers] = useState('');
   const [completed, setCompleted] = useState(0);
+  const [searchKeyword, setSearchKeyword] = useState('');
   const cellList = ["번호", "프로필 이미지", "이름", "생년월일", "성별", "직업", "설정"];
 
   const stateRefresh = () => {
     setCustomers('');
     setCompleted(0);
+    setSearchKeyword('');
     callApi()
     .then(data => setCustomers(data))
     .catch(err => console.log(err));
@@ -106,6 +108,21 @@ function App(props) {
     const body = await response.json();
     return body;
   };
+
+  const handleValueChange = (e) => {
+    let nextState = {};
+    nextState[e.targent.name] = e.target.value;
+    setCustomers(nextState);
+  }
+
+  const filteredComponents = (data) => {
+    data = data.filter((c) => {
+      return c.name.indexOf(searchKeyword) > -1;
+    });
+    return data.map((c) => {
+      return <Customer stateRefresh={props.stateRefresh} key={c.id} id={c.id} image={c.image} name={c.name} birthday={c.birthday} gender={c.gender} job={c.job}/>
+    });
+  }
 
   useEffect(function(){
     const timer = setInterval(() => {
@@ -148,6 +165,9 @@ function App(props) {
             <StyledInputBase
               placeholder="검색하기"
               inputProps={{ 'aria-label': 'search' }}
+              name = "searchKeyword"
+              value={searchKeyword}
+              onChange={handleValueChange}
             />
           </Search>
         </Toolbar>
@@ -166,8 +186,7 @@ function App(props) {
           </TableHead>
           <TableBody>
             {customers.length ?
-              customers.map(c => 
-                {return (<Customer stateRefresh={stateRefresh} key={c.id} id={c.id} image={c.image} name={c.name} birthday={c.birthday} gender={c.gender} job={c.job} />);}) 
+              filteredComponents(props.customers)
               : 
               <TableRow>
                 <TableCell colspan="6" align="center">
